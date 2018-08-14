@@ -1,12 +1,14 @@
 #include "text_file_reader.h"
 
-int main(void)
+char filter_entries[MAX_FILTER_ENTRY][MAX_FILTER_ENTRY_SIZE];
+std::string filterFilename("filterFile.txt");
+
+
+void loadFilter()
 {
-	int fd = open("filterFile.txt", O_RDONLY);
-	
+	int fd = open(filterFilename.c_str(), O_RDONLY);
 	// read line by line and store text strings in an array.
-	char filter_entries[MAX_FILTER_ENTRY][MAX_FILTER_ENTRY_SIZE];
-	//std::memset(filter_entries,0,MAX_FILTER_ENTRY*MAX_FILTER_ENTRY_SIZE*sizeof(char));
+	std::memset(filter_entries,0,MAX_FILTER_ENTRY*MAX_FILTER_ENTRY_SIZE*sizeof(char));
 	int entry = 0;
 	int c = 0;
 	if ( fd >= 0)
@@ -50,20 +52,37 @@ int main(void)
 	}
 	else
 	{
-		std::cout << "File not found." << std::endl;	
+		std::cout << "Filter File not found." << std::endl;	
 	}
 	
-	std::cout << "entry="<< entry << std::endl;
-	
-	for( int i = entry-1; i >= 0; i-- )
+	std::cout << "num of entries found="<< entry << std::endl;	
+}
+
+bool applyFilterTo(const char* input)
+{
+	for( int i = 0 ; i < MAX_FILTER_ENTRY && (strlen(filter_entries[i])>0); i++ )
 	{
 		std::cout <<  filter_entries[i] << std::endl;
-		//printf( "%s \n",filter_entries[i]);
-		if ( NULL != strstr(filter_entries[i],"not") )
+		if ( NULL != strstr(input, filter_entries[i]) )
 		{
-			std::cout <<  "   strstr FOUND " << std::endl;
+			std::cout <<  "   strstr " << filter_entries[i] << " FOUND in " << input << std::endl;
+			return true;
 		}
-	}
+	}	
+	return false;
+}
+
+int main(void)
+{
+	loadFilter();
+    std::cout <<  "____________" << std::endl;
+	std::string input_a("/data/not/applied/more/myapp.exe");
+	bool ret_a = applyFilterTo(input_a.c_str());
+	std::cout <<  "____________" << std::endl;
+	std::string input_b("/data/not/valid/more/myapp.exe");
+	bool ret_b = applyFilterTo(input_b.c_str());
+	std::cout <<  "____________" << std::endl;
+
 	
 	return 0;	
 }

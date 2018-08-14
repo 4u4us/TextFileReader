@@ -1,4 +1,6 @@
-not allowed
+allowed
 disabled
-path not valid
+valid
+.exe
+.java
 
