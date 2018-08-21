@@ -60,13 +60,22 @@ void loadFilter()
 
 bool applyFilterTo(const char* input)
 {
-	for( int i = 0 ; i < MAX_FILTER_ENTRY && (strlen(filter_entries[i])>0); i++ )
+	//for( int i = 0 ; i < MAX_FILTER_ENTRY && (strlen(filter_entries[i])>0); i++ )
+	//{
+	//	std::cout <<  filter_entries[i] << "::" << strlen(filter_entries[i]) << std::endl;
+	//}
+	//std::cout <<  "\n _______ \n" << std::endl;
+	for( int i = MAX_FILTER_ENTRY-1 ; i >= 0; i-- )
 	{
-		std::cout <<  filter_entries[i] << std::endl;
-		if ( NULL != strstr(input, filter_entries[i]) )
+		std::cout <<  filter_entries[i] << "::" << strlen(filter_entries[i]) << std::endl;
+		if ( strlen(filter_entries[i])>0 )
 		{
-			std::cout <<  "   strstr " << filter_entries[i] << " FOUND in " << input << std::endl;
-			return true;
+			//std::cout <<  filter_entries[i] << std::endl;
+			if ( NULL != strstr(input, filter_entries[i]) )
+			{
+				std::cout <<  "   strstr " << filter_entries[i] << " FOUND in " << input << std::endl;
+				return true;
+			}
 		}
 	}	
 	return false;

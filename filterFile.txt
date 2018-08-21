@@ -1,6 +1,8 @@
-allowed
-disabled
-valid
 .exe
+allowed
+/isnot/
+vvalid
+.xe
 .java
+.des
 
