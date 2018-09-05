@@ -3,6 +3,7 @@
 char filter_entries[MAX_FILTER_ENTRY][MAX_FILTER_ENTRY_SIZE];
 std::string filterFilename("filterFile.txt");
 
+std::map<int, std::string> mapOfFiles;
 
 void loadFilter()
 {
@@ -55,7 +56,7 @@ void loadFilter()
 		std::cout << "Filter File not found." << std::endl;	
 	}
 	
-	std::cout << "num of entries found="<< entry << std::endl;	
+	std::cout << "num of entries found in filter = "<< entry << std::endl;	
 }
 
 bool applyFilterTo(const char* input)
@@ -81,17 +82,53 @@ bool applyFilterTo(const char* input)
 	return false;
 }
 
+bool getFilenameBasedOnFileDescriptor(int a_fd, std::string& a_filename, bool doErase)
+{
+	bool ret = false; // default not found
+	a_filename = "";
+	std::map<int, std::string>::iterator it;
+	it = mapOfFiles.find(a_fd);
+	if (it != mapOfFiles.end())
+	{
+		ret = true;
+		std::cout <<  "   Found from map " << it->second.c_str() << std::endl;
+		a_filename = it->second;
+		if (true==doErase)
+		{
+			std::cout <<  "       Erasing from map " << it->second.c_str() << std::endl;
+			mapOfFiles.erase (it);
+		}
+	}
+	return ret;
+}
+
 int main(void)
 {
 	loadFilter();
+	
+	// Init a map of files with simulated file descriptor.
+	mapOfFiles[2] = "/data/not/valid/more/my2app.exe";
+	mapOfFiles[12] = "/data/not/vvalid/more/myapp";
+	mapOfFiles[100] = "/data/valid/more/my3app.exe";
+	mapOfFiles[3] = "/data/not/applied/more/myapp.exe";
+	
+	std::cout <<  "Num of elements in mapOfFiles: " << mapOfFiles.size() << std::endl;
+	
     std::cout <<  "____________" << std::endl;
-	std::string input_a("/data/not/applied/more/myapp.exe");
+   	std::string input_a(""); 
+    getFilenameBasedOnFileDescriptor(3, input_a, false);
 	bool ret_a = applyFilterTo(input_a.c_str());
 	std::cout <<  "____________" << std::endl;
-	std::string input_b("/data/not/valid/more/myapp.exe");
+	std::string input_b("");
+	getFilenameBasedOnFileDescriptor(12, input_b, false);
 	bool ret_b = applyFilterTo(input_b.c_str());
 	std::cout <<  "____________" << std::endl;
-
 	
+	// remove from map the files that were not used.
+	getFilenameBasedOnFileDescriptor(2, input_b, true);
+	getFilenameBasedOnFileDescriptor(100, input_b, true);
+	
+	std::cout <<  "Num of elements in mapOfFiles: " << mapOfFiles.size() << std::endl;
+
 	return 0;	
 }

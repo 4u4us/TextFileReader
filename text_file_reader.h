@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
+#include <map>
 
 
 #define MAX_FILTER_ENTRY 10
