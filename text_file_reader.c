@@ -1,9 +1,54 @@
 #include "text_file_reader.h"
 
+// SQLite installed with
+// sudo apt-get install SQLite
+// sudo apt-get install libsqlite3-dev
+// sudo apt-get install sqlitebrowser
+
+#include "sqlite3.h"
+
 char filter_entries[MAX_FILTER_ENTRY][MAX_FILTER_ENTRY_SIZE];
 std::string filterFilename("filterFile.txt");
 
 std::map<int, std::string> mapOfFiles;
+
+static int callback(void *data, int argc, char **argv, char **azColName){
+   int i;
+   fprintf(stderr, "%s: ", (const char*)data);
+   
+   for(i = 0; i<argc; i++){
+      printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+   }
+   
+   printf("\n");
+   return 0;
+}
+
+int addElementToDb(std::string aText)
+{
+	sqlite3 *db = NULL;
+	char *zErrMsg = 0;
+    int rc = SQLITE_NULL;
+    const char* data = "SQLite Callback: ";
+  
+    rc = sqlite3_open("testDB_1", &db);
+    if( rc  ){
+    	std::cout <<  "DB not opened " << std::endl;
+        sqlite3_close(db);
+      return(1);
+    }
+    else
+    {
+    	std::cout <<  "DB opened " << std::endl;
+    }
+    rc = sqlite3_exec(db, "select * from aTableA", callback, (void*)data, &zErrMsg);
+    if( rc!=SQLITE_OK ){
+    	std::cout <<  " DB exec not done" << std::endl;
+    }
+    sqlite3_close(db);
+	return aText.length();	
+	
+}
 
 void loadFilter()
 {
@@ -104,6 +149,9 @@ bool getFilenameBasedOnFileDescriptor(int a_fd, std::string& a_filename, bool do
 
 int main(void)
 {
+	
+	addElementToDb(std::string("DEDE"));
+	
 	loadFilter();
 	
 	// Init a map of files with simulated file descriptor.
