@@ -1,0 +1,14 @@
+#! /usr/bin/env stap
+
+#/TextFileReader(master)$ stat -c '%D %i' /home/eric/mygit/TextFileReader/text-file-reader 
+# 801 2228255
+# sudo stap tfr_stap_ex2.stp 0x8 0x1 2228255
+
+probe vfs.write, vfs.read
+{
+  # dev and ino are defined by vfs.write and vfs.read
+  if (dev == MKDEV($1,$2) # major/minor device
+      && ino == $3)
+    printf ("%s(%d) %s 0x%x/%u\n",
+      execname(), pid(), ppfunc(), dev, ino)
+}
