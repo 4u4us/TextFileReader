@@ -31,9 +31,9 @@ int addElementToDb(std::string aText)
     int rc = SQLITE_NULL;
     const char* data = "SQLite Callback: ";
   
-    rc = sqlite3_open("testDB_1", &db);
+    rc = sqlite3_open("testDB_2", &db);
     if( rc  ){
-    	std::cout <<  "DB not opened " << std::endl;
+        std::cout <<  "DB not opened " << rc << std::endl;
         sqlite3_close(db);
       return(1);
     }
@@ -41,9 +41,14 @@ int addElementToDb(std::string aText)
     {
     	std::cout <<  "DB opened " << std::endl;
     }
+    std::string query_db_string("create table IF NOT EXISTS aTableB ("+aText+" INTEGER PRIMARY KEY)");
+    rc = sqlite3_exec(db, query_db_string.c_str() , callback, (void*)data, &zErrMsg);
+    if( rc!=SQLITE_OK ){
+        std::cout <<  " DB exec not done" << rc  << " " << zErrMsg << std::endl;
+    }
     rc = sqlite3_exec(db, "select * from aTableA", callback, (void*)data, &zErrMsg);
     if( rc!=SQLITE_OK ){
-    	std::cout <<  " DB exec not done" << std::endl;
+        std::cout <<  " DB exec not done" << rc  << " " << zErrMsg << std::endl;
     }
     sqlite3_close(db);
 	return aText.length();	
