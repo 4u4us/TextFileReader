@@ -1,5 +1,5 @@
 # TextFileReader
-Text file reader in C
+Text file reader in C, using SQLite database.
 
 Added use of systemtap
 Get functions that can be probed:

@@ -1,6 +1,6 @@
 #! /usr/bin/env stap
 
-#/TextFileReader(master)$ stat -c '%D %i' /home/eric/mygit/TextFileReader/text-file-reader 
+#/TextFileReader(master)$ stat -c '%D %i' /home/$USER/mygit/TextFileReader/text-file-reader 
 # 801 2228255
 # sudo stap tfr_stap_ex2.stp 0x8 0x1 2228255
 
